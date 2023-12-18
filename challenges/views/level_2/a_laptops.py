@@ -32,7 +32,7 @@ def laptop_in_stock_list_view(request: HttpRequest) -> HttpResponse:
     В этой вьюхе вам нужно вернуть json-описание всех ноутбуков, которых на складе больше нуля.
     Отсортируйте ноутбуки по дате добавления, сначала самый новый.
     """
-    Laptop.objects.filter()
+
     laptops = Laptop.objects.filter(quantity__gte=0).order_by('-date_added')
     return HttpResponse('<br>'.join([x.to_json() for x in laptops]))
 
@@ -53,10 +53,9 @@ def laptop_filter_view(request: HttpRequest) -> HttpResponse:
                 )
             )
     ):
-        print(list(map(lambda x: str(x).lower, set(Laptop.objects.values_list('brand', flat=True)))))
         return HttpResponseForbidden()
-    laptops = Laptop.objects.filter(brand__iexact=brand, price__lte=(min_price if min_price else 100000))
-    return HttpResponse('<br>'.join(list(map(lambda x: str(x), laptops))))
+    laptops = Laptop.objects.filter(brand__iexact=brand, price__gte=min_price)
+    return HttpResponse('<br>'.join([laptop.to_json() for laptop in laptops]))
 
 
 def last_laptop_details_view(request: HttpRequest) -> HttpResponse:
@@ -64,7 +63,7 @@ def last_laptop_details_view(request: HttpRequest) -> HttpResponse:
     В этой вьюхе вам нужно вернуть json-описание последнего созданного ноутбука.
     Если ноутбуков нет вообще, вернуть 404.
     """
-    laptop = Laptop.objects.all().order_by('-date_added')[:1]
+    laptop = Laptop.objects.all().order_by('-date_added').last()
     if laptop:
         return HttpResponse(laptop)
     return HttpResponseForbidden()

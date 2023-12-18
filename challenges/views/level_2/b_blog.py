@@ -28,7 +28,7 @@ def last_posts_list_view(request: HttpRequest) -> HttpResponse:
     #                     category='news')
     # post = Post.objects.get(id=4)
     posts = Post.objects.filter(status='posted').order_by('-date_posted')[:3]
-    return HttpResponse('<br>'.join([str(post) for post in posts]))
+    return HttpResponse('<br>'.join([post.to_json() for post in posts]))
 
 
 def posts_search_view(request: HttpRequest) -> HttpResponse:

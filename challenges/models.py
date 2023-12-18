@@ -2,6 +2,7 @@ import json
 import datetime
 
 from django.db import models
+from django.forms.models import model_to_dict
 
 
 class Book(models.Model):
@@ -26,9 +27,7 @@ class Laptop(models.Model):
         return self.brand + ' ' + self.ram + 'Gb RAM ' + self.hdd + 'Gb HDD'
 
     def to_json(self):
-        return json.dumps({'brand': self.brand, 'year_of_production': self.year_of_production,
-                           'ram': self.ram, 'hdd': self.hdd, 'price': self.price,
-                           'quantity': self.quantity, 'date_added': self.date_added})
+        return json.dumps(model_to_dict(self))
 
 
 class Post(models.Model):
